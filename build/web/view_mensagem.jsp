@@ -10,9 +10,9 @@
 
 <%-- A variável mensagem é substituida pelo envio do Controller --%>
 <c:out value = "${mensagem}" /><br>
-<c:out value ="R.A: ${ra}" /><br>
-<c:out value ="Nome: ${nome}" /><br>
-<c:out value ="Curso:${curso}" /><br>
+RA: <c:out value = "${ra}" /><br>
+NOME: <c:out value = "${nome}" /><br>
+CURSO: <c:out value = "${curso}" />
 
 
 <c:import url="rodape.jsp" />

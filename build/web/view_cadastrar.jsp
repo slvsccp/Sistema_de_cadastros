@@ -5,7 +5,7 @@
 <c:import url="topo.jsp" />
 
 <div class="alert-success text-center espaco">
-    Cadastrar Aluno
+    Cadastrar Usuário
 </div>
 
 <form name="cadastrar" method="post" action="Controller">

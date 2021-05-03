@@ -5,7 +5,7 @@
 <c:import url="topo.jsp" />
 
 <div class="alert-success text-center espaco">
-    Listagem de Alunos
+    Listagem de Usuários
 </div>
 <table class="table table-bordered table-striped text-center">
     <thead>

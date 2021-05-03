@@ -5,7 +5,7 @@
 <c:import url="topo.jsp" />
 
 <div class="alert-success text-center espaco">
-    Pesquisar Aluno
+    Pesquisar Usuário
 </div>
 
 <form name="pesquisar" method="post" action="Controller">
