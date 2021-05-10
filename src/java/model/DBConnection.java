@@ -21,7 +21,7 @@ public class DBConnection {
     
     
     // enfereço onde está localizado o banco de dados
-    private final String url = "jdbc:mysql://localhost:3306/mvcjsp";
+    private final String url = "jdbc:mysql://localhost:3306/matuninove";
 
     // credenciais de acesso
     private final String usuario = "root";

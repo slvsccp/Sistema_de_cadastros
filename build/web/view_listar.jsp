@@ -25,9 +25,9 @@
                 <td class="align-middle text-justify">${aluno.curso}</td>
                 <td class="align-middle">
                     <input class="btn btn-primary btn-sm text-center"
-                           type="submit"
-                           name="operacao"
-                           value="Editar" />
+                        type="submit"
+                        name="operacao"
+                        value="Editar" />
                 </td>
 
                 <td class="align-middle">

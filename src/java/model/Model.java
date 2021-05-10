@@ -30,7 +30,7 @@ public class Model implements Serializable{
         // variável para receber a lista de alunos (registros)
         List<Aluno> alunos = new ArrayList();
         try {
-            String sql = "SELECT * FROM alunos ORDER BY nome ASC;";
+            String sql = "SELECT * FROM aluno ORDER BY nome ASC;";
             try (
                     // preparando a consulta
                     PreparedStatement ps = connection.prepareStatement(sql);

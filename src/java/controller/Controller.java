@@ -1,13 +1,23 @@
 package controller;
 
+import bean.Aluno;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import model.Model;
 
 public class Controller extends HttpServlet {
+    //var para o ambiente
+    int ra;
+    String nome;
+    String curso;
+    Aluno aluno = new Aluno();
+    List<Aluno> alunosDados; // armazena "todos" os alunos recuperados pelo Model
+    List<Aluno> alunoDados; // armazena apenas os dados de "um" Aluno
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -32,7 +42,8 @@ public class Controller extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+    protected void doGet(HttpServletRequest request, 
+            HttpServletResponse response)
             throws ServletException, IOException {
 
         // configuração para manter a acentuação e caracteres especiais
@@ -40,7 +51,24 @@ public class Controller extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
         response.setCharacterEncoding("UTF-8");
 
-        // fazendo a conexão com a camda do Model (Banco de Dados)
+        //conexão com a camada do Model (Banco de Dados)
+        try {
+            //chamar o Model
+            Model alunoModel = new Model();
+            
+            // atribuindo os valores retornados do Model para uma variável
+            alunosDados = alunoModel.listar();
+            
+            request.setAttribute("listaAlunos", alunosDados);
+            request.getRequestDispatcher("view_listar.jsp").
+                    forward(request, response);
+            
+        } catch (SQLException e) {
+            request.setAttribute("mensagem", e.getMessage());
+            request.getRequestDispatcher("view_mensagem.jsp").
+                    forward(request, response);
+        }
+            
     }
 
     /**
@@ -60,12 +88,6 @@ public class Controller extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         request.setCharacterEncoding("UTF-8");
         response.setCharacterEncoding("UTF-8");
-        /*
-        //conexao com a camada do Model (BD)
-        try{
-        }catch(SQLException exe){
-            request.setAttribute("mensagem", ex);
-        }*/
 
         // vamos criar o controle para administrar o que está acontecendo
         // vamos criar uma variável para recuperar qual "opção" o usuário escolheu
