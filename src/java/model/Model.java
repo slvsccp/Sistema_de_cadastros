@@ -57,4 +57,49 @@ public class Model implements Serializable{
             throw new RuntimeException("Falha ao listar.");
         }
     }
+        
+    // método para inserir registro no BD
+    public void inserir(Aluno aluno){
+        try {
+            String sql = "INSERT INTO aluno (ra, nome, curso) VALUES (?,?,?);";
+            try(PreparedStatement ps = connection.prepareStatement(sql)){
+                //atribuir os valores do objeto (aluno) ao (ps)
+                ps.setString(1, aluno.getRa());
+                ps.setString(2, aluno.getNome());
+                ps.setString(3, aluno.getCurso());
+                
+                //executar a inclusão
+                ps.execute();
+                ps.close();
+            }
+            connection.close();
+            this.statusMessage = "Incluido com sucesso!";
+            
+        } catch (SQLException ex) {
+            this.statusMessage = "Falha ao inserir: " + ex.getMessage();
+        }
+    }
+    
+    // método para inserir excluir um registro no BD
+    public void excluir(Aluno aluno) {
+        try {
+            String sql = "DELETE FROM aluno WHERE ra = ?;";
+            try (PreparedStatement ps = connection.prepareStatement(sql)) {
+                ps.setString(1, aluno.getRa());
+
+                // executar a inclusão
+                ps.execute();
+                ps.close();
+            }
+            connection.close(); // fecha a conexão com o banco de dados
+            this.statusMessage = "Excluído com sucesso";
+        } catch (SQLException ex) {
+            this.statusMessage = "Falha ao excluir: " + ex.getMessage();
+        }
+    }
+    
+    @Override
+    public String toString(){
+        return this.statusMessage;
+    }
 }
