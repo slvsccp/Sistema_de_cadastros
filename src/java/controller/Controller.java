@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import model.Model;
 
 public class Controller extends HttpServlet {
+
     //var para o ambiente
     int ra;
     String nome;
@@ -42,7 +43,7 @@ public class Controller extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
-    protected void doGet(HttpServletRequest request, 
+    protected void doGet(HttpServletRequest request,
             HttpServletResponse response)
             throws ServletException, IOException {
 
@@ -55,20 +56,20 @@ public class Controller extends HttpServlet {
         try {
             //chamar o Model
             Model alunoModel = new Model();
-            
+
             // atribuindo os valores retornados do Model para uma variável
             alunosDados = alunoModel.listar();
-            
+
             request.setAttribute("listaAlunos", alunosDados);
             request.getRequestDispatcher("view_listar.jsp").
                     forward(request, response);
-            
+
         } catch (SQLException e) {
             request.setAttribute("mensagem", e.getMessage());
             request.getRequestDispatcher("view_mensagem.jsp").
                     forward(request, response);
         }
-            
+
     }
 
     /**
@@ -80,7 +81,7 @@ public class Controller extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
-    protected void doPost(HttpServletRequest request, 
+    protected void doPost(HttpServletRequest request,
             HttpServletResponse response)
             throws ServletException, IOException {
         // essas linhas configuram o código de página 
@@ -101,41 +102,86 @@ public class Controller extends HttpServlet {
         // todas as operações abaixo são referentes a banco de dados
         switch (operacao) {
             case "Inserir":
-                try{
+                try {
                     //passar os valores recebidos do form para o objeto
-                aluno.setRa(request.getParameter("ra"));
-                aluno.setNome(request.getParameter("nome"));
-                aluno.setCurso(request.getParameter("curso"));
-                
-                //chamar o model pra fazer a operação
-                Model alunoModel = new Model();
-                
-                //chamar o método de inclusão, passando o objeto (aluno)
-                alunoModel.inserir(aluno);
+                    aluno.setRa(request.getParameter("ra"));
+                    aluno.setNome(request.getParameter("nome"));
+                    aluno.setCurso(request.getParameter("curso"));
 
-                request.setAttribute("mensagem", alunoModel.toString());
-                
-                }catch(SQLException ex){
+                    //chamar o model pra fazer a operação
+                    Model alunoModel = new Model();
+
+                    //chamar o método de inclusão, passando o objeto (aluno)
+                    alunoModel.inserir(aluno);
+
+                    request.setAttribute("mensagem", alunoModel.toString());
+
+                } catch (SQLException ex) {
                     request.setAttribute("mensagem", ex.getMessage());
-                    
+
                 }
                 // redireciona para a view_mensagem
                 request.getRequestDispatcher("view_mensagem.jsp").
                         forward(request, response);
                 break;
-                
+
             case "Pesquisar":
-                request.setAttribute("mensagem", "Você clicou em Pesquisar");
+                String valorDigitado = request.getParameter("valor");
+
+                try {
+                    Model alunoModel = new Model();
+
+                    //verificar quem está chegando (tipo da pesquisa)
+                    switch (request.getParameter("tipo")) {
+                        case "ra":
+                            aluno.setRa(valorDigitado);
+                            break;
+
+                        case "nome":
+                            aluno.setNome(valorDigitado);
+                            break;
+
+                        case "curso":
+                            aluno.setCurso(valorDigitado);
+                            break;
+                    }
+                    alunosDados = alunoModel.pesquisar(aluno,
+                            request.getParameter("tipo"));
+
+                    //tratar os dados
+                    if (alunosDados.isEmpty()) { // isEmpty() é vázio
+                        request.setAttribute("mensagem", "Não localizado");
+                        request.getRequestDispatcher("view_mensagem.jsp").
+                                forward(request, response);
+                    } else {
+                        request.setAttribute("listaAlunos", alunosDados);
+                        request.getRequestDispatcher("view_listar.jsp").
+                                forward(request, response);
+                    }
+
+                } catch (SQLException e) {
+                    request.setAttribute("mensagem", e.getMessage());
+                    request.getRequestDispatcher("view_mensagem.jsp").
+                            forward(request, response);
+                }
                 break;
-                
+
             case "Editar":
-                request.setAttribute("mensagem", "Você clicou em Editar");
+                try {
+                    Model alunoModel = new Model();
+                    aluno.setRa(request.getParameter("ra"));
+                    alunoDados = alunoModel.pesquisar(aluno, "ra");
+
+                    request.setAttribute("alunoDados", alunoDados);
+                    request.getRequestDispatcher("view_editar.jsp").
+                            forward(request, response);
+                } catch (SQLException e) {
+                    request.setAttribute("mensagem", e.getMessage());
+                    request.getRequestDispatcher("view_mensagem.jsp").
+                            forward(request, response);
+                }
                 break;
-                
-            case "Atualizar":
-                request.setAttribute("mensagem", "Você clicou em Atualizar");
-                break;
-                
+
             case "Excluir":
                 try {
                     // passar os valores recebidos do formulário para o objeto
@@ -157,8 +203,7 @@ public class Controller extends HttpServlet {
                 // redireciona para a view_mensagem
                 request.getRequestDispatcher("view_mensagem.jsp").
                         forward(request, response);
-                
-                
+
             case "Confirmar Exclusao":
                 request.setAttribute("mensagem",
                         "Você clicou em Confirmar Exclusão");

@@ -25,6 +25,60 @@ public class Model implements Serializable{
         this.connection = DBConnection.getInstance().getConnection();
     }
     
+    // Esse método vai servir para: pesquisar, editar e excluir
+    public List<Aluno> pesquisar(Aluno aluno,  String tipo){
+        List<Aluno> alunos = new ArrayList();
+        
+        PreparedStatement ps = null;
+        String sql = new String();
+        
+        try {
+            // 1 - montar as expressões SQL
+            switch(tipo) {
+                case "ra":
+                    sql = "SELECT * FROM aluno WHERE ra = ?;";
+                    ps = connection.prepareStatement(sql);
+                    ps.setString(1, aluno.getRa());
+                    break;
+                
+                case "nome":
+                    sql = "SELECT * FROM aluno WHERE nome = ?;";
+                    ps = connection.prepareStatement(sql);
+                    ps.setString(1, aluno.getNome());
+                    break;
+                
+                case "curso":
+                    sql = "SELECT * FROM aluno WHERE curso = ? ORDER BY curso, nome ASC;";
+                    ps = connection.prepareStatement(sql);
+                    ps.setString(1, aluno.getCurso());
+                    break;
+            }
+            
+            // 2 - ResultSet (pegar os resultados do BD)
+            ResultSet rs = ps.executeQuery();
+            
+            // 3 - Montar o while (colocar os dados recebidos no objeto (Aluno)
+            while(rs.next()){
+                aluno = new Aluno();
+                aluno.setId(rs.getInt("id"));
+                aluno.setRa(rs.getString("ra"));
+                aluno.setNome(rs.getString("nome"));
+                aluno.setCurso(rs.getString("curso"));
+                
+                // 4 - Adicionar na lista
+                alunos.add(aluno);
+            }
+            rs.close();
+            ps.close();
+            
+            // 5 - Retornar a lista de alunos
+            return alunos;
+            
+        } catch (SQLException e) {
+            throw new RuntimeException("Falha ao pesquisar" + e.getMessage());
+        }
+    }
+    
     //método p/ listar todos os registros (Menu Listar)
         public List<Aluno> listar() {
         // variável para receber a lista de alunos (registros)
@@ -80,7 +134,7 @@ public class Model implements Serializable{
         }
     }
     
-    // método para inserir excluir um registro no BD
+    // método para excluir um registro no BD
     public void excluir(Aluno aluno) {
         try {
             String sql = "DELETE FROM aluno WHERE ra = ?;";
@@ -96,6 +150,7 @@ public class Model implements Serializable{
         } catch (SQLException ex) {
             this.statusMessage = "Falha ao excluir: " + ex.getMessage();
         }
+    
     }
     
     @Override
